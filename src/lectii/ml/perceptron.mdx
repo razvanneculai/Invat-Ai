@@ -1,0 +1,62 @@
+import PerceptronClasificator from '@/widgets/PerceptronClasificator'
+
+În lecția anterioară am construit un neuron cu greutăți și bias fixe. Sliderele erau miscate, neuronul reacționa. Dar într-un caz real **nimeni nu mută sliderele cu mâna**: greutățile se aleg singure, automat, dintr-un set de exemple. Asta înseamnă „învățare automată".
+
+Cea mai simplă versiune de neuron care învață singur se numește **perceptron**. A fost inventat în 1957 de Frank Rosenblatt și a fost suficient de promițător încât armata americană l-a finanțat ca „inteligența artificială adevărată" (engl. Real Artificial Inteliigence). Apoi, în 1969, doi cercetători — Marvin Minsky și Seymour Papert — au demonstrat o limită fundamentală a perceptronului. În loc să stimuleze cercetarea, descoperirea lor a îngropat domeniul rețelelor neuronale pentru aproape 20 de ani.
+
+Hai să vedem ce făcea perceptronul să fie special și unde se afla limita lui.
+
+## Setup-ul problemei
+
+Avem un set de puncte într-un plan, fiecare cu o **etichetă**: punctele negre = clasa 1, punctele albe = clasa 0. Vrem să găsim greutățile `w₁`, `w₂` și bias-ul `b` astfel încât:
+
+```
+dacă w₁·x + w₂·y + b > 0  →  perceptronul prezice clasa 1
+altfel                       →  perceptronul prezice clasa 0
+```
+
+Geometric, decizia perceptronului e o **linie dreaptă** în plan. Tot ce e de o parte a liniei → clasă 1. Tot ce e de cealaltă → clasă 0. Atât poate face un perceptron: să taie planul cu o linie.
+
+## Algoritmul de învățare
+
+În varianta originală, perceptronul își ajustează singur greutățile cu o regulă extrem de simplă:
+
+1. Ia un punct din dataset.
+2. Calculează predicția curentă.
+3. Dacă a greșit, „împinge" greutățile puțin în direcția răspunsului corect.
+4. Repetă pentru toate punctele, până nu mai greșește.
+
+Asta e tot. Nu există gradient, nu există backpropagation, nu există nimic complicat. Doar o regulă „mută în direcția răspunsului bun" aplicată iar și iar.
+
+Pentru această lecție, **tu vei juca rolul algoritmului de învățare**. Mută sliderele tu însuți și încearcă să clasifici corect toate punctele.
+
+## Probează-l
+
+Mai jos ai două dataseturi diferite. Primul, **„separabil liniar"**, are punctele frumos aranjate. Al doilea, **„XOR"**, e capcana clasică din 1969.
+
+Pentru fiecare, ajustează `w₁`, `w₂` și `b` ca să maximizezi numărul de puncte clasificate corect. Cercurile cu contur întrerupt sunt punctele pe care le-ai greșit.
+
+<PerceptronClasificator />
+
+Pentru datasetul **separabil**, ar trebui să poți ajunge la 12/12 destul de repede. Punctele negre sunt jos-dreapta, cele albe sus-stânga. O linie diagonală care trece prin origine (de exemplu `w₁ = 1`, `w₂ = -1`, `b = 0`) le separă perfect.
+
+Pentru datasetul **XOR**, dureaza mai mult timp. Încearcă de mai multe ori. Vezi unde te blochezi.
+
+## XOR — limita perceptronului
+
+Datasetul XOR are 4 grupuri de puncte:
+
+- **Clasa 1** (negru): colțul (+, +) și colțul (−, −)
+- **Clasa 0** (alb): colțul (+, −) și colțul (−, +)
+
+Sau, exprimat în cuvinte: un punct e clasa 1 dacă cele două coordonate au **același semn**, altfel e clasa 0. Asta e exact funcția logică XOR (sau-exclusiv).
+
+Problema: **nu există nicio linie dreaptă** care să separe corect cele două clase. Orice linie ai trasa, lași măcar două puncte pe partea greșită. Indiferent cum reglezi `w₁`, `w₂`, `b`, scorul maxim posibil e 9 din 12.
+
+Ăsta e momentul „1969". Minsky și Papert au demonstrat formal că un perceptron singur nu poate învăța nici măcar funcția XOR — o funcție trivială cu doar 4 cazuri. Concluzia tristă pentru epocă a fost că „rețelele neuronale" nu sunt instrumentul promis. Finanțările s-au oprit, cercetătorii s-au mutat pe alte teme.
+
+## De ce contează asta
+
+Limita perceptronului nu e o curiozitate izolată — e o limită fundamentală a oricărui **clasificator liniar**, indiferent cât de bine îl antrenezi. Dacă punctele tale nu pot fi separate cu o singură linie dreaptă, ai nevoie de mai mult decât un singur neuron.
+
+Soluția — **rețele multi-strat**, în care outputul unor neuroni devine inputul altor neuroni — e exact ce vom vedea în lecția 4. Dar mai întâi, în lecția următoare, vom înțelege piesa care lipsea: **funcțiile de activare non-liniare**. Acestea sunt motivul pentru care, când compui doi neuroni, obții ceva mai puternic decât un singur neuron. Fără ele, „rețea cu 100 de straturi" nu valorează mai mult decât un singur neuron simplu.

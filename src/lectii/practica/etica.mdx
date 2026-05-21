@@ -1,0 +1,86 @@
+Modelele AI moderne sunt impresionante și utile. Dar nu sunt nici neutre, nici infailibile. În ultima lecție a cursului discutăm **când și de ce să fii prudent** când folosești un AI — atât tu ca utilizator, cât și ca cetățean într-o lume tot mai automatizată.
+
+Nu e o lecție despre „pericolul AI-ului" în sens hollywoodian. E despre probleme **reale și actuale** care apar deja zilnic.
+
+## 1. Bias-ul din date
+
+Un model învață din ceea ce a citit. Dacă datele de antrenare conțin prejudecăți — și conțin întotdeauna, pentru că sunt produse de oameni — modelul le va reproduce. Câteva exemple documentate:
+
+- Sisteme de selecție CV-uri care preferau bărbații pe poziții tehnice (pentru că in trecut acestia erau majoritari).
+- Sisteme de recunoaștere facială care au avut rate de eroare semnificativ mai mari pentru fețe diferite de cele albe (pentru că dataseturile erau dominate de fețe albe).
+- Modele de traducere care reproduc stereotipuri de gen („the doctor said" → tradus la masculin, „the nurse said" → tradus la feminin).
+
+**Important:** modelul nu „crede" aceste lucruri. Doar le-a învățat statistic. Dar consecințele asupra oamenilor afectați sunt aceleași, chiar dacă cauza e mecanică, nu intențională.
+
+Ce poți face: atunci când folosești un AI pentru decizii care afectează oameni — angajări, evaluări, recomandări — întreabă-te **ce bias-uri ar putea fi în date** și verifică rezultatele.
+
+## 2. Halucinațiile sunt o problemă de încredere
+
+Am vorbit în detaliu despre halucinații în secțiunea LLM. Concluzia practică fiind:
+
+> Un LLM nu spune niciodată „nu știu" dacă nu e antrenat explicit să o facă. Va da întotdeauna un răspuns. Iar uneori, fără să-și dea seama, va inventa.
+
+Reguli practice:
+
+- **Nu cita un LLM ca sursă** într-un articol, lucrare sau prezentare. Tratează-l ca pe un asistent care îți dă o primă schiță — pe care o **verifici** întotdeauna.
+- **Pentru fapte specifice** (date, citate, statistici, autori), verifică în surse independente. LLM-urile inventează surse cu certitudine convingătoare.
+- **Pentru programare**, testează. LLM-urile inventează funcții și API-uri inexistente, cu sintaxă plauzibilă dar nefuncțională.
+- **Pentru sfaturi medicale, legale, financiare**, nu le folosi ca sursă unică. Sunt utile ca punct de plecare pentru întrebări către un specialist — niciodată ca înlocuitor.
+
+## 3. Copyright și plagiat
+
+Modelele sunt antrenate pe milioane de cărți, articole, site-uri, cod sursă — adesea fără permisiunea autorilor. Situația juridică e încă neclară. Câteva probleme concrete:
+
+- **LLM-urile pot reproduce paragrafe întregi din texte existente**, dacă au fost văzute des în antrenare. Asta poate fi plagiat involuntar dacă publici răspunsul.
+- **Codul generat poate copia segmente din proiecte open-source** cu licențe restrictive (GPL etc.). Folosirea lui fără permisiune poate fi încălcare de licență.
+- **Imaginile generate** pot semăna cu lucrările unor artiști vii, fără ca artiștii să isi fi dat consimțamantul sau să fi fost plătiți.
+
+Pentru un proiect școlar: dacă folosești un LLM ca asistent, **declară asta**. Dacă publici text generat ca fiind al tău, fără să-l rescrii și verifici, e o formă de plagiat — chiar dacă în prezent regulile nu sunt încă uniformizate.
+
+> Pentru olimpiada InfoEducație: **regulamentul cere ca toate componentele neoriginale să fie declarate explicit într-un fișier README**. Nedeclararea = punctaj 0. Folosirea unui LLM pentru a genera cod sau conținut intră în această categorie.
+
+## 4. Confidențialitate
+
+Când scrii un prompt, **textul tău pleacă pe serverele unei companii**. La cele mai multe servicii comerciale (ChatGPT, Claude, Gemini), datele tale pot fi folosite pentru antrenarea viitoarelor modele. Asta înseamnă că orice îi spui ar putea, teoretic, să iasă la suprafață în răspunsuri către alți utilizatori.
+
+**Nu pune niciodată într-un LLM:**
+
+- Parole, chei API, secrete.
+- Date personale ale altor persoane (CNP-uri, adrese, conversații private).
+- Cod proprietar dintr-o companie / proiect confidențial.
+- Informații medicale despre tine pe care nu ai vrea să le vezi reproduse.
+
+Variante mai sigure: rulează un model local (Ollama, LM Studio) — datele nu părăsesc calculatorul tău. Sau folosește versiunile „enterprise" ale serviciilor, care promit non-utilizarea datelor pentru antrenare.
+
+## 5. Dependența cognitivă
+
+Aici nu e vorba de un risc tehnic, ci unul personal. Pe termen lung, dacă **delegi sistematic** anumite activități unui LLM, riști să **pierzi acele competențe**.
+
+- Dacă lași LLM-ul să-ți scrie toate eseurile, scrii mai prost după cateva luni.
+- Dacă lași LLM-ul să-ți facă toate temele de programare, devii dependent.
+- Dacă lași LLM-ul să-ți rezume toate lecturile, citești mai prost și ai mai puțină capacitate de a sintetiza si memora singur.
+
+Asta nu înseamnă „nu folosi AI". Înseamnă **folosește-l ca o unealtă, nu ca pe un punct de sprijin**. Ca un ciclist care folosește bicicleta să meargă mai departe, dar care, ocazional, mai merge și pe jos ca să isi piarda capacitatea.
+
+Întrebare utilă în orice context: „**dacă mâine nu mai am acces la AI, ce am pierdut?**" Dacă răspunsul e „doar viteza"  folosești AI bine. Dacă răspunsul e „capacitatea însăși de a face X", este o problema.
+
+## 6. Impactul in societate pe termen lung
+
+Câteva tendințe pe care merită să le țai in vedere, ca cetățean:
+
+- **Automatizarea muncii**. AI-ul va înlocui activități, dar **nu meserii întregi** atât de repede pe cât prezic articolele virale. Cele mai expuse: copywriting, traduceri, programare juniori, suport tehnic L1. Recomandare: dezvoltă abilități pe care AI-ul nu le poate înlocui ușor — gândire critică, judecată, creativitate, relații umane.
+- **Dezinformare**. Imagini, voce, video generate de AI pot fi indistincibile de cele reale. Cere surse, verifică, fii sceptic cu materiale virale.
+- **Concentrarea puterii**. Construcția modelelor mari costă sute de milioane de dolari. Asta înseamnă că puține companii vor controla infrastructura AI-ului. E o problemă de politică publică, nu doar tehnică.
+
+## Concluzia cursului
+
+Ai parcurs 12 lecții. Acum știi:
+
+- **Cum funcționează** rețelele neuronale și LLM-urile, la nivel de mecanism.
+- **De ce eșuează** uneori (overfitting, halucinații).
+- **Cum le folosești bine** (prompt engineering).
+- **Când să fii prudent** (bias, copyright, confidențialitate, dependență).
+
+Astea sunt abilitatile fundamentele de care ai nevoie ca să fii un utilizator informat al AI-ului, indiferent ce vei face în viață. Tehnologia se va schimba — modelele de azi vor fi depasite în 2-3 ani, înlocuite de altele mai puternice. Dar **principiile rămân**: un model AI prezice probabilități statistice. Atât. Restul e arta de a folosi acest instrument cu cap.
+
+Mult succes.

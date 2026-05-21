@@ -1,0 +1,82 @@
+import AttentionViz from '@/widgets/AttentionViz'
+
+Ai văzut că un LLM lucrează cu tokeni și că fiecare token are un **embedding**, un vector care îi codifică sensul. Dar ce face un model când primește **o propoziție întreagă**? Tokenii nu sunt independenți iar sensul lui „a sărit" depinde de cine a sărit și peste ce. Pentru asta s-a inventat **mecanismul de atenție**, piesa centrală a arhitecturii **Transformer**, care este coloana vertebrală a tuturor LLM-urilor moderne (GPT, Claude, Gemini, Llama).
+
+## Problema: care tokeni sunt cei mai importanti?
+
+Imaginează-ți modelul prelucrând propoziția:
+
+> „Pisica neagră a sărit gardul."
+
+Când e timpul să prelucreze cuvântul „**sărit**", ce alți tokeni îi sunt utili? Intuitiv:
+- „Pisica"  îi spune *cine* a sărit.
+- „gardul"  îi spune *ce* a sărit.
+- „a" îi confirmă că „sărit" e participiu (predicat la perfect compus), nu adjectiv.
+- „neagră" este irelevant pentru semnificația lui „sărit".
+
+**Atenția** e mecanismul prin care modelul învață să atribuie automat aceste **greutăți de relevanță**. Pentru fiecare token, el calculează **cât de mult** să se uite la fiecare alt token din context. Aceste greutăți se numesc **attention scores**.
+
+## Probează-l
+
+Mai jos ai trei propoziții. Click pe un token și vezi la ce **se uită** el cu cea mai multă atenție. Fiecare token e umbrit cu o intensitate proporțională cu attention score-ul. În partea de jos vezi și valorile numerice.
+
+<AttentionViz />
+
+Câteva lucruri interesante:
+
+- În prima propoziție, dă click pe „sărit". Vezi că atenția cea mai mare e către „Pisica" (subiectul) și „gardul" (obiectul). Verbul „se uită" la cine acționează și asupra cărui obiect.
+- În a doua, dă click pe „El". Pronumele trebuie să găsească cui se referă. Greutatea cea mai mare e către „Andrei", iar modelul rezolvă **coreferința** (cine e antecedentul pronumelui). Pentru un om e evident; pentru un model, e o problemă greu de rezolvat.
+- În a treia, dă click pe „Paris". Vezi conexiunea fermă către „Franței", un fapt geografic care apare des în texte (de unde și greutatea mare).
+
+## Cum se calculează atenția?
+
+Pentru fiecare token, modelul construiește **trei vectori** din embedding-ul lui:
+
+- **Q (Query)** — „Eu, tokenul curent, ce caut?"
+- **K (Key)** — „Eu, tokenul X, ce ofer?"
+- **V (Value)** — „Iată conținutul meu, dacă mă găsești relevant."
+
+Pentru a calcula cât de mult contează tokenul Y pentru tokenul X, calculezi **produsul scalar** între Q-ul lui X și K-ul lui Y. Cu cât e mai mare, cu atât mai relevant e Y pentru X.
+
+Formula completă, foarte celebră în domeniu:
+
+```
+Attention(Q, K, V) = softmax(Q · Kᵀ / √d) · V
+```
+
+- `Q · Kᵀ` calculează toate produsele scalare deodată (toți tokenii vs. toți tokenii).
+- `√d` e un factor de normalizare (`d` = dimensiunea vectorilor) care evită ca scorurile să devină prea mari.
+- `softmax` transformă scorurile în probabilități (sumează la 1).
+- Înmulțirea finală cu `V` produce un vector nou pentru fiecare token — o **combinație ponderată** a tuturor valorilor V din context, cu greutățile date de atenție.
+
+Atât. Aceasta e „coeficientul de atenție" (engl. *attention head*). Modelele moderne folosesc **multi-head attention**: rulează acest calcul de mai multe ori în paralel (8, 16, 32 de capete), fiecare „coeficient" învățând să se concentreze pe alt tip de relație (subiect-verb, coreferință, sintaxă, semantică etc.).
+
+## Arhitectura Transformer
+
+Un Transformer e construit din **blocuri identice** repetate. Fiecare bloc face în esență:
+
+1. **Atenție** (toți tokenii „se văd" între ei).
+2. **Rețea fully-connected** (un MLP, exact ce am studiat la „Rețele multi-strat") aplicată pe fiecare token independent.
+3. **Conexiuni reziduale** + **normalizare** (detalii tehnice pentru ca antrenarea să meargă).
+
+GPT-4, Claude Sonnet, Llama, Gemini, toate au la bază această structură. Diferența vine din:
+
+- **Numărul de blocuri** (între 12 și ~120).
+- **Dimensiunea embedding-urilor** (între 768 și ~12.288).
+- **Numărul de coeficienti de atenție** per bloc.
+- **Modul de antrenare** și **datele** folosite.
+
+Un model „cu 175 miliarde de parametri" e doar un Transformer cu suficiente blocuri/capete/dimensiuni încât suma greutăților să ajungă acolo.
+
+## De ce e atenția revoluționară
+
+Înainte de Transformer (lucrarea „Attention Is All You Need", 2017), modelele de limbaj foloseau **rețele recurente** (RNN, LSTM). Acestea procesau textul **un token pe rând**, ținând o „memorie" internă a contextului anterior. Două probleme mari:
+
+1. **Lente** — nu pot fi paralelizate eficient (fiecare token depinde de cel anterior).
+2. **Uită contextul lung** astfel, memoria internă „se degradeaza" rapid; după 100 de tokeni, iar modelul uita începutul.
+
+Atenția rezolvă ambele: toți tokenii se „văd" simultan (paralelism complet) și fiecare are acces direct la toți ceilalți (fără pierdere de context). De aceea, Transformer-ul a devenit standard în 5 ani și de aceea acum putem antrena modele de sute de miliarde de parametri.
+
+## Ce urmează
+
+Acum știi cum „înțelege" un LLM contextul. În ultima lecție din secțiunea LLM, vom înțelege de ce, în ciuda aceastei infrastructuri elegante, modelele uneori inventează lucruri, adică **halucinează**.

@@ -1,0 +1,58 @@
+import NeuronInteractiv from '@/widgets/NeuronInteractiv'
+
+Când auzi „rețea neuronală", probabil te gândești la creier. Asocierea e mai mult istorică decât tehnică — un neuron artificial nu e o copie a celui biologic, e o funcție matematică simplă inspirată vag de neuronul real. La fel cum un avion e inspirat de pasăre, dar nu bate din aripi, un neuron artificial e inspirat de cel biologic, dar funcționează cu numere și operații aritmetice elementare.
+
+Un neuron artificial face exact trei lucruri:
+
+1. Primește câteva numere ca **input**.
+2. Le combină într-un singur număr, ținând cont de **greutăți** (engl. *weights*) și de un **bias**.
+3. Trece rezultatul printr-o **funcție de activare** și scoate un singur număr ca **output**.
+
+Asta e tot. Tot ce se întâmplă într-o rețea neuronală — fie ea ChatGPT (LLM), un model de intelegere a imaginilor sau un model meteo — e construit prin compunerea a milioane sau miliarde de astfel de calcule banale.
+
+## Formula
+
+Dacă neuronul are două inputuri `x₁` și `x₂`, două greutăți `w₁` și `w₂`, un bias `b` și o funcție de activare `f`, atunci outputul `a` se calculează în doi pași:
+
+```
+z = w₁ · x₁ + w₂ · x₂ + b
+a = f(z)
+```
+
+Sau, pentru un număr arbitrar de inputuri:
+
+```
+z = Σ (wᵢ · xᵢ) + b
+a = f(z)
+```
+
+Atât. Suma ponderată plus un offset, totul trecut printr-o funcție. Nimic mai mult.
+
+## Ce înseamnă fiecare parte?
+
+**Greutățile (`w₁`, `w₂`, ...)** spun cât de mult contează fiecare input. Dacă `w₁` e mare, neuronul „tinde" puternic catre `x₁`. Dacă `w₂` e zero, ignoră complet `x₂`. Dacă o greutate e negativă, inputul corespunzător trage rezultatul în jos.
+
+**Bias-ul (`b`)** e un offset constant care se adaugă mereu. Imaginează-ți un termostat: greutățile spun cât de tare contează temperatura din diverse camere, dar bias-ul spune „la ce prag declanșez căldura". Schimbi bias-ul, schimbi pragul de la care neuronul „se aprinde".
+
+**Funcția de activare (`f`)** decide cum să transforme suma ponderată într-un output util. Dacă `f` ar fi identitatea (`f(z) = z`), neuronul ar fi doar un calcul liniar — o sumă ponderată. Funcțiile non-liniare ca **sigmoid**, **ReLU** sau **tanh** sunt motivul pentru care rețelele neuronale pot învăța lucruri complicate, nu doar linii drepte. Vom intra în detalii într-o lecție viitoare.
+
+## Incearca-l
+
+Mai jos e un neuron cu două inputuri. Mută slidere pentru greutăți, bias și inputuri. Vezi în timp real cum se schimbă outputul.
+
+Pătratul din dreapta arată **funcția de decizie** a neuronului peste tot planul `(x₁, x₂)`. Pentru fiecare punct din pătrat, calculăm outputul neuronului și colorăm pixelul: pixeli **întunecați** = output mare, pixeli **deschiși** = output mic. Punctul alb marcat indică inputul tău curent.
+
+<NeuronInteractiv />
+
+Câteva experimente utile:
+
+- Pune `w₁ = 1`, `w₂ = 0`, `b = 0`. Neuronul tinde acum doar la `x₁`. Vezi cum harta devine o tranziție verticală, astfel `x₂` nu mai contează.
+- Pune `w₁ = 1`, `w₂ = 1`, `b = -1`. Se aprinde doar când `x₁ + x₂ > 1`. Apare un marcaj diagonal.
+- Schimbă activarea din sigmoid în ReLU. Observă cum pragul devine mai „dur" — în loc de o tranziție lină, ai o linie tăioasă.
+- Pune toate greutățile pe zero. Outputul depinde doar de bias. Practic, ai un neuron „surd" care nu mai "aude" inputurile.
+
+## De ce contează asta?
+
+Un singur neuron e foarte limitat. Tot ce poate să facă e să **separe planul printr-o singură linie** (sau, cu activare non-liniară, printr-o curbă „simplă"). Asta înseamnă că nu poate rezolva probleme în care punctele bune și cele rele sunt amestecate într-un fel mai complicat.
+
+Soluția: **compune** mai mulți neuroni. Outputul unui neuron devine inputul altuia, în straturi. Asta vom face în lecțiile următoare. Dar mai întâi, hai să vedem cum se „auto-ajustează" un neuron — adică cum își alege singur greutățile potrivite. Asta înseamnă, de fapt, „învățare automată".

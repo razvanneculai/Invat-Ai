@@ -1,0 +1,66 @@
+import PolinomFit from '@/widgets/PolinomFit'
+
+Până acum am vorbit despre cum o rețea „învață", adica cum își ajustează parametrii ca să facă mai puține greșeli pe datele de antrenare. Dar aici se ascunde o problemă subtilă: **un model care merge perfect pe datele de antrenare nu e neapărat un model bun**. Ar putea fi doar un model care a *memorat*, fără să fi *înțeles* nimic.
+
+Această diferență — între a învăța regula generală și a memora exemplele particulare — e numită **generalizare** în machine learning. E poate cea mai importantă noțiune din tot domeniul.
+
+## Două eșecuri opuse
+
+Imaginează-ți că vrei să prezici prețul unui apartament din suprafață. Ai 10 exemple. Două extreme:
+
+**Underfit (model prea simplu).** Tragi o linie dreaptă prin date. Ignori că pentru apartamentele mici prețul crește brusc, pentru cele mari crește lent. Linia e o aproximare grosolană, care face greșeli mari atât pe datele de antrenare, cât și pe predicții noi.
+
+**Overfit (model prea complex).** Folosești o curbă atât de flexibilă încât trece *exact* prin toate cele 10 puncte. Eroarea pe antrenare e zero, perfect! Dar dacă încerci să prezici prețul unui apartament nou, curba ta sare în direcții inexacte între punctele cunoscute. Modelul a învățat „pe de rost" exemplele, nu pattern-ul real.
+
+Ambele sunt eșecuri. Diferența: la underfit, te-a trădat **lipsa de capacitate** a modelului. La overfit, te-a trădat **excesul de capacitate** combinat cu prea puține date.
+
+## Probează-l
+
+Mai jos ai 14 puncte de antrenare. Punctele provin dintr-o funcție reală (o sinusoidă) plus puțin **zgomot** (variație aleatorie). Tu nu vezi funcția reală, ci doar punctele. Treaba modelului e să o ghicească.
+
+Folosește slider-ul pentru „gradul polinomului". Cu cât gradul e mai mare, cu atât modelul e mai flexibil — poate descrie curbe mai contorsionate.
+
+<PolinomFit />
+
+Câteva lucruri de încercat:
+
+- **Grad 1** (linie dreaptă). Modelul e prea simplu, iar punctele nu sunt aliniate liniar. Eroarea e mare *atât* pe antrenare *cât și* pe test.
+- **Grad 3–4**. Curba urmează frumos forma sinusoidală reală (cea punctată). Eroarea pe antrenare e mică, eroarea pe test e și ea mică. Asta e **potrivirea corecta**.
+- **Grad 10–12**. Curba devine inexacta între puncte, sare in sus și in jos ca să nimerească exact fiecare punct. Eroarea pe antrenare scade aproape la zero. Dar eroarea pe test **crește**, astfel modelul a învățat să copieze chiar și zgomotul, nu doar forma reală.
+
+Asta e overfitting-ul vizual. Bifează „arată funcția adevărată", si vei observa că modelul cu grad mare se îndepărtează grav de curba adevărată în zonele dintre puncte.
+
+## Cum recunoști overfitting-ul în practică
+
+Regula de aur: **împarți datele în două grupuri:** **training set** (cu care antrenezi modelul) și **test set** (cu care îl evaluezi după, niciodată folosit la antrenare).
+
+- Dacă eroarea pe **antrenare** și pe **test** sunt amândouă mari → underfit. Modelul e prea simplu, mărește-i capacitatea.
+- Dacă eroarea pe **antrenare** e mică dar pe **test** e mare → overfit. Modelul a memorat. Vezi mai jos ce poți face.
+- Dacă amândouă sunt mici → ai noroc, modelul generalizează.
+
+În cazul de mai sus, eroarea „pe test" e calculată față de funcția adevărată (fără zgomot). În realitate, această funcție e necunoscută, deci ții deoparte câteva puncte adevărate, pe care modelul nu le-a văzut, și le folosești ca test.
+
+## Cum reduci overfitting-ul
+
+Câteva tehnici importante:
+
+**Mai multe date.** Cea mai sigură soluție. Cu 1000 de puncte, e mult mai greu să „memorezi" decât cu 14. De-asta antrenarea unui LLM mare necesită miliarde de exemple, astfel datele compensează capacitatea uriașă.
+
+**Regularizare.** Adaugi în loss o penalizare pentru greutăți mari. Modelul preferă soluții simple, cu greutăți mici, dacă nu există un motiv puternic ca ele să crească. Două variante populare: **L1** (penalizează suma valorilor absolute ale greutăților) și **L2** (penalizează suma pătratelor).
+
+**Dropout.** În timpul antrenării, „dezactivezi" aleator o parte din neuroni la fiecare pas. Modelul nu se mai poate baza pe neuroni specifici și învață soluții redundante. La momentul testului, toți neuronii sunt din nou activi. Tehnică surprinzător de eficientă.
+
+**Early stopping.** Antrenezi cât eroarea pe test scade. Imediat ce începe să crească (chiar dacă eroarea pe antrenare continuă să scadă), oprești antrenarea. Practic, întrerupi învățarea înainte ca modelul să apuce să „memoreze".
+
+## Compromisul bias-variație
+
+Toată discuția de mai sus se rezumă matematic la un **compromis fundamental**, cunoscut sub numele de „bias-variance tradeoff":
+
+- **Bias** = eroarea sistematică datorată unui model prea simplu (underfit).
+- **Variance** = eroarea datorată sensibilității excesive la zgomotul din date (overfit).
+
+Nu poți minimiza ambele la maxim. Un model perfect ar avea bias zero și varianță zero, dar asta înseamnă să cunoști deja funcția reală — iar atunci nu mai ai nevoie de machine learning. Tot ce poți face e să **găsești punctul de echilibru** între aceste două surse de eroare. În exercițiul de mai sus, gradul 3–4 era punctul de echilibru pentru datele tale.
+
+## Ce urmează
+
+Cu asta închidem secțiunea de Machine Learning. Acum ai modelul mental complet: cum se construiește o rețea, cum învață, când reușește și când eșuează. În următoarele lecții ne mutăm la modele de limbaj (LLM-uri) — care sunt rețele neuronale enorme cu un design specializat numit **Transformer**.

@@ -1,0 +1,68 @@
+import GradientDescent1D from '@/widgets/GradientDescent1D'
+
+Până acum, **tu** ai jucat rolul algoritmului de învățare: ai mutat sliderele cu mâna până ai obținut rezultatul dorit. Funcționează pentru 9 parametri pe un dataset mic. Nu funcționează pentru cele 175 de miliarde de parametri din GPT, antrenat pe tot internetul.
+
+În această lecție vedem cum **automatizăm** procesul. Conceptual e foarte simplu, dar conține ideea care a făcut tot AI-ul modern posibil.
+
+## Eroarea ca funcție
+
+Începem cu o întrebare: **cum măsurăm cât de slab se descurcă rețeaua?**
+
+Pentru un set de exemple `(x, y_corect)`, definim o **funcție de eroare** sau **funcție de loss** (engl. *loss function*). Cea mai simplă: media diferențelor pătratice între ce a prezis rețeaua și ce ar fi trebuit să prezică:
+
+```
+L = (1/N) · Σ (y_prezis − y_corect)²
+```
+
+Cu cât `L` e mai mic, cu atât rețeaua e mai bună.
+
+Acum vine ideea cheie: pentru o rețea fixă, **`L` e o funcție de parametri**. Cu alte cuvinte, dacă schimbi `w₁` puțin, `L` se schimbă într-un fel previzibil; la fel pentru `w₂`, pentru `b`, și așa mai departe. Antrenarea înseamnă să **găsim acei parametri care minimizează `L`**.
+
+## Coborârea pe gradient
+
+Imaginează-ți că ești pe o vale, în ceață, și vrei să ajungi la cel mai jos punct. Nu vezi nimic la distanță, dar simți cu piciorul **înclinarea pământului**. Strategia evidentă: faci un pas în direcția în care panta merge cel mai abrupt în jos. Apoi resimți, faci alt pas. Și iar. Eventual ajungi în fundul văii.
+
+Asta e, literalmente, **coborârea pe gradient** (engl. *gradient descent*):
+
+```
+w ← w − η · ∂L/∂w
+```
+
+- `∂L/∂w` e **derivata** lui `L` raportat la `w` — adică „cât crește `L` dacă mărim `w` puțin"
+- Semnul minus → ne mișcăm **împotriva** pantei (în jos)
+- `η` (citește „eta") e **rata de învățare** — cât de mare e fiecare pas
+
+Repetăm până când `L` nu mai scade.
+
+## Pe o funcție simplă
+
+Hai să vezi asta pe cel mai simplu exemplu posibil: o funcție de loss cu **un singur parametru** `w`:
+
+```
+L(w) = (w − 2)² + 1
+```
+
+E o parabolă cu minimul la `w = 2`, unde `L = 1`. Treaba algoritmului e să găsească acel `w = 2` automat, indiferent de unde începem.
+
+Apasă **„Un pas →"** și vezi cum greutatea se mișcă singură către minim. Variază rata de învățare `η` și vezi ce se întâmplă:
+
+<GradientDescent1D />
+
+Câteva lucruri de încercat:
+
+- Pornește cu `w = -1.5`, `η = 0.15`. Apasă pasul de câteva ori. Pași mari la început (gradientul e mare), pași mici la final (gradientul scade pe măsură ce te apropii de minim). E natural, algoritmul „încetinește" singur.
+- Pune `η = 1.0`. Greutatea **sare peste minim**, ajunge dincolo, apoi se întoarce. „Oscilează" deoarece rata e prea mare.
+- Pune `η = 1.1`. Acum greutatea **divergează**, fiecare pas e mai mare decât precedentul. Rata prea mare = antrenarea explodează. Asta se întâmplă în practică și e una dintre cele mai frecvente bug-uri în lumea reală.
+- Pune `η = 0.02`. Greutatea se mișcă spre minim, dar foarte încet. Ai nevoie de zeci de pași. Asta e celălalt risc: rate prea mici = antrenarea durează la nesfârșit.
+
+Alegerea unui `η` bun e una dintre cele mai studiate probleme în deep learning. În practică se folosesc algoritmi adaptivi (Adam, RMSProp) care îl modifică automat.
+
+## De ce funcționează asta pe rețele reale
+
+Pentru o rețea cu N parametri (poate fi 9, poate fi 175 de miliarde), `L` devine o funcție de **N variabile**. Gradientul `∇L` e un vector cu N componente — câte o derivată pentru fiecare parametru. Regulă rămâne identică:
+
+```
+w_i ← w_i − η · ∂L/∂w_i  pentru fiecare i
+```
+
+Algoritmul care calculează toate aceste derivate eficient, într-o singură trecere prin rețea, se numește **backpropagation** (sau pe scurt *backprop*). E o aplicație inteligentă a regulii lanțului de la liceu, exact aceeași regulă pe care o folosești când derivezi `sin(x²)`. Nu intrăm în detalii aici (matematica e un curs separat), dar **intuiția pe care o ai acum despre coborârea pe gradient e exact ce face un model real**  doar în mai multe dimensiuni.

@@ -1,0 +1,72 @@
+import EmbeddingPlanar from '@/widgets/EmbeddingPlanar'
+
+În lecția anterioară am văzut că un LLM primește text-ul ca o secvență de **tokeni**, bucăți discrete, ca niște cărămizi LEGO. Dar fiecare token e doar un număr, un ID din vocabular, o adresa. Cum „știe" modelul că tokenul pentru „pisică" e legat de tokenul pentru „câine"?
+
+Răspunsul: prin **embedding-uri**. E poate cea mai elegantă idee din tot deep learning-ul modern, și o vei vedea apărând peste tot, nu doar la LLM-uri, ci și la modele de imagini, sunet, video.
+
+## Cuvânt → vector
+
+În loc să tratezi tokenul ca un simplu ID („pisică" = #4521), îl reprezentăm ca un **vector** de numere reale. De exemplu, în loc de „pisică" = #4521, am putea avea:
+
+```
+pisică  → [0.21, -0.45, 0.83, ..., 0.12]   (300 numere)
+```
+
+Acest vector se numește **embedding-ul** cuvântului „pisică". Numerele individuale nu au sens intrinsec; ce contează e **poziția** vectorului în spațiul mare de embedding-uri.
+
+Secretul: embedding-urile sunt construite astfel încât **cuvinte cu sens similar să fie aproape** ca vectori. „Pisică" și „câine" vor fi mai aproape decât „pisică" și „algoritm". Asta e ceea ce face un model „să înțeleagă" — îl tratează pe „pisică" similar cu „câine" pentru că vectorii sunt geometric similari.
+
+## Cum învață embedding-urile
+
+În realitate, **nimeni nu programează aceste vectori cu mâna**. Sunt învățați automat dintr-un corpus mare de text, folosind o observație simplă:
+
+> Cuvintele care apar frecvent în contexte similare au, probabil, sens similar.
+
+„Pisica mănâncă peștele" și „Câinele mănâncă peștele" sunt structuri foarte similare. Un model care prezice cuvântul lipsă dintr-o propoziție, antrenat pe miliarde de astfel de propoziții, va învăța **automat** să creeze vectori similari cu „pisică" și „câine" deoarece pentru că ambele se potrivesc în aceleași contexte.
+
+Asta a fost ideea genială a unei lucrări numite **word2vec** (Mikolov et al., 2013), și e fundament pentru toate modelele de limbaj de azi.
+
+## Probează-l
+
+Mai jos ai o demonstrație vizuală. Am ales 38 de cuvinte românești și le-am aranjat **manual** în 6 grupuri tematice: Animale, Alimente, Emoții, Locuri, Timp, Mișcare.
+
+(De ce manual? Pentru claritate didactică. Într-un model real, pozițiile sunt învățate automat dintr-un corpus și sunt similare cu ce vezi aici. Pe noi ne interesează ideea, nu modelul antrenat.)
+
+Tastează un cuvânt și vezi cele mai apropiate 5 cuvinte din spațiul embedding:
+
+<EmbeddingPlanar />
+
+Câteva lucruri de încercat:
+
+- Caută „pisică". Vecinii ei imediați sunt alte animale: câine, leu, lup, vulpe.
+- Caută „bucurie". Vecinii sunt alte emoții.
+- Caută un cuvânt de la marginea unui grup, cum ar fi „casă". Va avea vecini din mai multe categorii (locuri, dar poate și unele cuvinte legate de viața de zi cu zi).
+- Vezi că **distanța** între grupuri reflectă cumva și **relația** între concepte. Animalele și mișcarea sunt mai apropiate decât animalele și timpul, de exemplu.
+
+## „Aritmetica" embedding-urilor
+
+Aici se întâmplă lucrul cu adevărat magic. În spațiul embedding, se pot face **operații aritmetice cu sens**:
+
+```
+vector("rege") − vector("bărbat") + vector("femeie") ≈ vector("regină")
+```
+
+Asta a fost descoperirea uluitoare din 2013, modelul nu „știe" ce înseamnă „rege" sau „regină", dar a învățat o geometrie a sensului în care direcția „bărbat → femeie" e aceeași indiferent de cuvântul de la care pleci.
+
+În cazul nostru de demonstrație, dacă ar fi un model real, ai putea face:
+
+```
+vector("oraș") − vector("sat") + vector("școală") ≈ vector("universitate")
+```
+
+(Aproximativ. Pentru relații culturale specifice, e nevoie de un model antrenat pe limba respectivă.)
+
+## De ce sunt graficele 2D minciuni
+
+Ce vezi în grafic e o **proiecție 2D** dintr-un spațiu cu sute sau mii de dimensiuni. Un embedding real are 300–4096 de componente (numere). Proiectarea pe 2 dimensiuni e ca aplatizarea unui glob pe o hartă plată — distorsionează inevitabil unele relații.
+
+În spațiul original, fiecare „dimensiune" e o axă pe care modelul a învățat să separe cuvinte după o anumită proprietate. Pentru cuvinte, asta poate fi „cuvânt concret vs. cuvânt abstract", sau „singular vs. plural", sau „verb vs. substantiv". Ce face spațiul embedding util e că **multe** astfel de dimensiuni există simultan.
+
+## Ce urmează
+
+În lecția următoare, vom vedea cum un LLM combină tokenii + embedding-urile + rețele multi-strat ca să genereze text și de ce, chiar și cu toată această infrastructură elegantă, modelele **halucinează**.

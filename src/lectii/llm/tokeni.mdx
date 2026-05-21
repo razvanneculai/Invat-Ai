@@ -1,0 +1,48 @@
+import TokenSplitter from '@/widgets/TokenSplitter'
+
+Ai folosit probabil ChatGPT, Claude sau alt model de limbaj. Vorbești cu el în română, el îți răspunde în română, pare să „înțeleagă" cuvinte. În realitate, **niciun LLM nu vede cuvinte**. Vede **tokeni**: bucăți mici de text reprezentate ca numere.
+
+În această lecție vedem ce sunt tokenii și de ce contează asta în practică.
+
+## De ce nu pe litere ci pe cuvinte?
+
+Cea mai naivă idee ar fi: facem ca fiecare **literă** să fie unitatea de bază. Modelul ar primi un șir de litere ca input și ar prezice litera următoare. Funcționează? Da, dar e ineficient: cuvintele uzuale (cum ar fi „este", „pentru", „și") apar foarte des — și de fiecare dată modelul trebuie să-și amintească piesă cu piesă cum se scriu. Cu 100 de mii de cuvinte uzuale, modelul ar pierde mult timp pe ortografie în loc de înțeles.
+
+Cealaltă extremă: facem ca fiecare **cuvânt** să fie unitatea de bază. Atunci „este" e un singur input, modelul nu se mai stresează cu literele. Problema: limba română are zeci de mii de cuvinte (cu toate flexiunile), iar dacă apare un cuvânt nou pe care modelul nu l-a mai văzut, e blocat — nu poate spune nimic despre el.
+
+**Tokenii** sunt compromisul: bucăți mai mari decât o literă, dar mai mici decât un cuvânt — de obicei rădăcini, prefixe, sufixe sau cuvinte scurte. Cu un vocabular de ~50.000–100.000 de tokeni, un LLM poate „construi" practic orice cuvânt din limba sa, indiferent dacă l-a mai văzut sau nu.
+
+## Algoritmul: BPE pe scurt
+
+Cel mai folosit algoritm de tokenizare la LLM-uri se numește **BPE** (Byte Pair Encoding). Ideea:
+
+1. Pornim cu fiecare literă ca propriul ei token.
+2. Ne uităm la cea mai frecventă pereche de tokeni învecinați în corpus (mii de cărți, articole, web).
+3. Fuzionăm acea pereche într-un token nou.
+4. Repetăm până avem un vocabular de dimensiunea dorită (ex: 50.000).
+
+Rezultatul: cuvintele și rădăcinile frecvente devin tokeni întregi (ex: „ființă", „mașină", „acasă"), iar cele rare se impart automat în bucăți mai mici.
+
+## Probează-l
+
+Tokenizer-ul de mai jos e o aproximare didactică care imparte cuvintele după sufixe și prefixe românești frecvente, nu pe baza unui BPE adevărat. Dar idea e aceeași.
+
+<TokenSplitter />
+
+Câteva lucruri de încercat:
+
+- Scrie un cuvânt scurt și unul lung. Vezi că „casă" rămâne un singur token, dar „intermediar" se sparge în „inter" + „mediar".
+- Scrie un cuvânt inventat („caracudă", „flobopălmuit"). Vezi că tokenizatorul îl prelucrează totuși, sprijinindu-se pe litere și prefixe pe care le cunoaște.
+- Scrie un text cu multă punctuație. Numără câți tokeni îți ies vs. câte caractere ai introdus.
+
+## De ce contează asta în practică
+
+**Costul rulării unui LLM e proporțional cu numărul de tokeni**, atât în input cât și în output. API-urile comerciale (OpenAI, Anthropic, Google) te costa per 1000 de tokeni. Dacă scrii un prompt foarte lung, plătești mai mult; dacă scrii eficient, plătești mai puțin.
+
+**Limita „context window"**, câti tokeni poate procesa un model deodată? Aceasta este una dintre cele mai importante caracteristici tehnice. GPT-4o suportă ~128.000 de tokeni, Claude Sonnet suportă ~200.000, Gemini 1.5 Pro a urcat la peste 1 milion. În tokeni românești asta înseamnă, aproximat, 200–300 de pagini ale unei carte.
+
+**Limba contează.** Pentru un text în engleză, un token reprezintă aproximativ 4 caractere. Pentru un text în română, datorită cuvintelor mai lungi și a diacriticelor, raportul e ușor mai slab, de obicei 3–3.5 caractere per token. Asta înseamnă că rularea unui LLM e ~10–20% mai scumpă în română decât în engleză pentru același conținut.
+
+## Ce urmează
+
+Acum știi că un LLM primește un șir de tokeni ca input. Dar tokenii sunt doar bucăți de text — niște numere fără sens intrinsec. Cum reușește modelul să „înțeleagă" că „pisică" și „câine" au ceva în comun, dar „pisică" și „algoritm" nu? Răspunsul: prin **embedding-uri**. Asta e tema lecției următoare.

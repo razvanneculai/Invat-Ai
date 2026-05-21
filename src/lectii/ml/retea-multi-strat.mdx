@@ -1,0 +1,62 @@
+import ReteaMultiStrat from '@/widgets/ReteaMultiStrat'
+
+Am ajuns la lecția care „repară" eroarea istorică din 1969. Atunci, Minsky și Papert au arătat că un perceptron singur nu poate învăța XOR. Dar concluzia practică pe care a luat-o lumea ca „rețelele neuronale nu funcționează", a fost greșită. Mai exact, **un perceptron** nu poate învăța XOR. Dar dacă pui **doi perceptroane în serie**, problema dispare.
+
+Aceasta e ideea de **rețea multi-strat** (engl. *multilayer perceptron* sau MLP). Tot ce înseamnă AI modern, de la ChatGPT la modelele de viziune cu OpenCV, e construit pe acest principiu, doar la o scară mult mai mare.
+
+## Arhitectura
+
+Rețeaua pe care o construim aici are **două inputuri**, **un strat ascuns** (engl. *hidden layer*) cu **doi neuroni**, și **un output**. Scrisă cu numere: 2-2-1. E cea mai mică rețea care poate învăța XOR.
+
+```
+x₁ ──┐         ┌── h₁ ──┐
+     ├── w₁,₁  │        │
+     │── w₂,₁  │        ├── v₁ ──┐
+x₂ ──┤        ├──        │        ├── y
+     ├── w₁,₂  │        │── v₂ ──┘
+     └── w₂,₂  │        │
+              └── h₂ ──┘
+```
+
+Forward pass:
+
+```
+h₁ = sigmoid(w₁₁·x₁ + w₁₂·x₂ + b₁)
+h₂ = sigmoid(w₂₁·x₁ + w₂₂·x₂ + b₂)
+y  = sigmoid(v₁·h₁ + v₂·h₂ + c)
+```
+
+În total: 6 greutăți (4 pentru hidden, 2 pentru output) + 3 biases = **9 parametri**.
+
+## De ce funcționează acum
+
+Trucul e că **fiecare neuron ascuns calculează propria sa linie de decizie**. Ai practic doi perceptroni „lucrând în paralel" — fiecare separă planul cu o linie a sa. Apoi al treilea neuron (cel de output) combină rezultatele lor și creează o decizie mai complicată decât o singură linie.
+
+Cu setarea care va apărea în soluție:
+- `h₁` se activează când valoarea `x₁ + x₂` e mare (colț ++)
+- `h₂` se activează când valoarea `x₁ + x₂` e negativ (colț −−)
+- `y` se activează când **oricare** dintre `h₁` și `h₂` e activ → asta e XOR
+
+Asta e tot ce face „adâncimea" într-o rețea: îi permite să **compună** decizii simple într-una mai complicată.
+
+## Probează-l
+
+Mai jos ai rețeaua 2-2-1 cu toate cei 9 parametri pe slidere. Începe cu presetul **„Soluția XOR"** și funcția de decizie are *patru zone* diferite (sus-stânga, sus-dreapta, jos-stânga, jos-dreapta), exact ce trebuie pentru XOR.
+
+<ReteaMultiStrat />
+
+Câteva experimente:
+
+- Cu presetul **„Soluția XOR"**, schimbă pe rând câte un parametru și vezi cum se „deformează" granița decizională. Mai ales `v₁` și `v₂` (output), ele controlează *calculul* final.
+- Apasă **„Aleator"** de câteva ori și uită-te la situatii ciudate. Cele mai multe configurații aleatorii dau o decizie de tip „neuron simplu", o singură linie. XOR e o configurație **rară** care apare doar când parametrii sunt aliniați potrivit.
+- Apasă **„Zero"**. Toate greutățile sunt zero, deci `h₁ = h₂ = sigmoid(0) = 0.5`. Și `y = sigmoid(0) = 0.5`. Indiferent ce inputuri pui, rețeaua spune „nu știu" (output 0.5 peste tot). Asta e starea în care „pornește" o rețea neantrenată.
+
+## „Teorema aproximării universale"
+
+Există un rezultat matematic spectaculos, **teorema aproximării universale**, care spune că o rețea neuronală cu un singur strat ascuns, suficient de larg și cu activări non-liniare, poate **aproxima orice funcție continuă**, oricât de complicată. În practică folosim totuși rețele cu multe straturi (deep learning), pentru că ele învață mai eficient, dar puterea fundamentală e deja în rețeaua 2-2-1.
+
+## Ce urmează
+
+Avem acum o rețea care, *dacă i-ai dat parametrii potriviți*, poate rezolva probleme complicate. Dar întrebarea cea mai importantă rămâne: **cum găsește singură parametrii potriviți?** Tu i-ai selectat cu sliders cu mâna. În lumea reală, antrenarea înseamnă găsirea automată a celor 9 numere, și a celor 175 de miliarde de numere dintr-un model mare cum e GPT.
+
+În lecția următoare, vedem **intuiția din spatele algoritmului care face asta**: coborârea pe gradient.

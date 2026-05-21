@@ -1,0 +1,138 @@
+Până acum am vorbit despre **cum funcționează** modelele AI. În această secțiune vorbim despre **cum le folosești bine**. Începem cu cea mai importantă deprindere practică: scrierea de prompturi eficiente.
+
+„Prompt engineering" sună pompos, dar nu e nimic mai mult decât **arta de a formula o cerere clară**. Cu cât formularea e mai precisă, cu atât răspunsul e mai util. Cu cât e mai vagă, cu atât modelul ghicește mai mult — și halucinează mai des.
+
+## Principiul fundamental
+
+LLM-urile nu „înțeleg" în sensul uman. Ele completeaza textul. Tot ce poți face e să le dai un context care **face continuarea textului sa fie cel mai probabil raspuns.**.
+
+Asta înseamnă:
+
+- Cu cât prompt-ul tău seamănă mai mult cu: „început de răspuns bun la întrebarea X", cu atât modelul e mai probabil să-l completeze cu un răspuns bun la întrebarea X.
+- Cu cât e mai ambiguu, cu atât distribuția probabilităților e mai dispersată — și modelul poate alege un răspuns proastă-arătând dar greșit.
+
+## 5 tehnici, în ordine de impact
+
+### 1. Fii specific
+
+**Slab:**
+
+```
+Spune-mi despre războiul mondial.
+```
+
+**Bun:**
+
+```
+Explică-mi pe scurt cauzele economice ale Primului Război Mondial,
+în 3-4 paragrafe, pentru un elev de clasa a X-a.
+```
+
+A doua versiune îi spune modelului: ce subiect (WW1, nu WW2), ce unghi (economic), ce lungime (3-4 paragrafe), ce nivel (clasa X). Răspunsul va fi imediat mai util.
+
+### 2. Dă rolul
+
+LLM-urile răspund diferit dacă le spui cine ar trebui să fie. Asta se numeste ghidare a stilului de raspuns.
+
+**Slab:**
+
+```
+Cum funcționează gradient descent?
+```
+
+**Bun:**
+
+```
+Esti un profesor de matematică prietenos. Explică-mi gradient descent
+ca unui elev de clasa a XI-a, folosind o analogie cu coborârea unui munte în ceață.
+Nu folosi mai mult de 200 de cuvinte.
+```
+
+### 3. Arată exemple (few-shot)
+
+LLM-urile copiază modele(patterns). Dacă vrei output într-un format specific, dă **exemple** ale formatului dorit.
+
+**Slab:**
+
+```
+Tradu următoarele cuvinte în engleză: pisică, câine, masă, scaun.
+```
+
+**Bun:**
+
+```
+Tradu cuvinte din română în engleză. Format:
+RO: [cuvânt] → EN: [traducere]
+
+RO: ciocolată → EN: chocolate
+RO: pâine → EN: bread
+
+Acum tradu: pisică, câine, masă, scaun.
+```
+
+A doua versiune îi dă modelului un *pattern* exact. Va respecta formatarea cu mai multă precizie.
+
+### 4. Cere raționament pas cu pas
+
+Pentru probleme de logică, cere explicit: „gândește pas cu pas". Asta e cunoscut sub numele de **chain-of-thought prompting** și îmbunătățește semnificativ performanța la a sarcinilor de rationament.
+
+**Slab:**
+
+```
+Câți ani are Maria dacă peste 5 ani va avea de două ori vârsta de acum 7 ani?
+```
+
+**Bun:**
+
+```
+Câți ani are Maria dacă peste 5 ani va avea de două ori vârsta de acum 7 ani?
+Gândește pas cu pas, scrie ecuațiile, apoi dă răspunsul final.
+```
+
+A doua versiune îl forțează modelul să „își arate munca" — și statistic, asta scade rata de greșeli la probleme matematice.
+
+### 5. Definește constrângerile
+
+LLM-urile sunt *verbose* by default. Dacă nu vrei un eseu, spune-i.
+
+**Slab:**
+
+```
+Care e capitala Franței?
+```
+
+**Bun:**
+
+```
+Care e capitala Franței? Răspunde în maxim 5 cuvinte, fără explicații.
+```
+
+A doua versiune îți va da literalmente „Capitala Franței este Paris." În loc de trei paragrafe despre istorie și turism.
+
+## Ce să nu faci
+
+**Nu fi politicos cu prețul preciziei.** „Te-ar deranja să-mi explici, dacă vrei și nu e prea mult..." îi spune modelului că ești ezitant. Mai bine: „Explică-mi clar X."
+
+**Nu pune mai multe întrebări într-un singur prompt** dacă nu ai un format clar pentru răspuns. Modelul poate amesteca răspunsurile sau prioritiza una și ignora alta.
+
+**Nu presupune că modelul „își amintește".** Într-o conversație nouă, începe cu tot contextul necesar. Modelele nu păstrează nimic între sesiuni decât dacă platforma o face explicit.
+
+**Nu te baza pe răspuns fără verificare** pentru fapte specifice. Vezi lecția despre halucinații. Modelele sunt convingătoare chiar și când greșesc.
+
+## Un șablon util
+
+Pentru sarcini complexe, încearcă acest șablon:
+
+```
+[ROL]    Acționează ca un [expert în X].
+[SARCINĂ] Trebuie să [verb] [obiect].
+[CONTEXT] Iată informațiile relevante: [...]
+[FORMAT] Răspunde în [format dorit], în [N] cuvinte/paragrafe.
+[CONSTRÂNGERI] Nu include [Y]. Folosește exemple [din domeniul Z].
+```
+
+Acoperă toate cele 5 tehnici dintr-un foc.
+
+## Ce urmează
+
+Bine, acum scrii prompturi bune. Dar și răspunsul cel mai bine formulat are limite. În lecția următoare vorbim despre **etica și limitele AI-ului** — când nu ar trebui să te bazezi pe el, indiferent cât de bine îl prompt-ezi.

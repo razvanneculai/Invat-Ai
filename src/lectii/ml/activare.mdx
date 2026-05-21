@@ -1,0 +1,62 @@
+import ActivareSandbox from '@/widgets/ActivareSandbox'
+
+Până acum am vorbit despre **funcția de activare** ca despre o piesă a neuronului, fără să explicăm de ce e atât de importantă. În această lecție o punem sub microscop. Vei vedea că, fără activări non-liniare, **orice rețea neuronală — oricât de adâncă — colapsează la un singur neuron**.
+
+## Recap rapid
+
+Un neuron calculează:
+
+```
+z = w₁·x₁ + w₂·x₂ + ... + b
+a = f(z)
+```
+
+Suma `z` e mereu **liniară** în inputuri, e o combinație de tip „înmulțiri și adunări". Funcția `f` aplicată peste `z` e ceea ce poate (sau nu) să introducă **non-linearitate**.
+
+## Problema cu identitatea
+
+Dacă alegem ca `f` să fie funcția identitate, adică `f(z) = z`, atunci neuronul devine pur și simplu:
+
+```
+a = w₁·x₁ + w₂·x₂ + ... + b
+```
+
+O funcție afină. Linie dreaptă (sau hiperplan, în mai multe dimensiuni). Acum imaginează-ți că legi doi astfel de neuroni unul după altul:
+
+```
+h = u·x + p          (neuron 1, fără activare)
+y = v·h + q          (neuron 2, fără activare)
+
+Înlocuind:
+y = v·(u·x + p) + q = (v·u)·x + (v·p + q)
+```
+
+Rezultat: tot o funcție afină. Doi neuroni „liniari" legați = un singur neuron liniar. **Trei neuroni** legați = tot un singur neuron liniar. **O mie de neuroni** legați = tot un singur neuron liniar. Indiferent câte straturi pui, **dacă activările sunt liniare, rețeaua e echivalentă cu un singur strat**. Și am văzut în lecția anterioară că un singur strat liniar nu poate rezolva XOR.
+
+De-asta avem nevoie de funcții de activare **non-liniare**. Ele sunt motivul pentru care „rețele adânci" sunt o idee bună.
+
+## Trei funcții populare
+
+Cele mai folosite funcții de activare sunt **sigmoid**, **tanh** și **ReLU**. Hai să le vezi.
+
+<ActivareSandbox />
+
+**Sigmoid**: `σ(x) = 1 / (1 + e⁻ˣ)`. Output între 0 și 1. Forma de „S". Util pentru interpretări de tip probabilitate. Are o problemă serioasă: pentru `x` foarte mare sau foarte mic, derivata e aproape zero. Asta îngreunează antrenarea rețelelor adânci („vanishing gradient").
+
+**Tanh**: similară cu sigmoid, dar output între −1 și 1, centrată în 0. Adesea alesa in locul sigmoid-ului pentru straturile ascunse, dar suferă de aceeași problemă cu derivata aproape de zero la extreme.
+
+**ReLU** (Rectified Linear Unit): `ReLU(x) = max(0, x)`. Foarte simplă: dacă inputul e negativ, output 0. Dacă e pozitiv, output = input. Pare aproape liniară, dar acel „cot" la x = 0 e suficient pentru ca rețele cu ReLU să poată învăța orice funcție (cu destui neuroni). Derivata e 1 pentru x > 0, ceea ce înseamnă că „nu se topesc gradienții". Acesta e  motivul pentru care ReLU domină practic toate rețelele neuronale moderne, de la imagini la LLM-uri.
+
+**Identitatea**: doar pentru contrast, `f(x) = x`. O includem ca să poți să vezi tu însuți că un neuron fără activare e doar o sumă ponderată.
+
+## De ce contează derivata
+
+Funcția punctată din grafic e **derivata** funcției de activare. La prima vedere arată ca un detaliu matematic, dar în realitate e **inima algoritmului de antrenare**.
+
+Când un model AI „învață", el folosește un algoritm numit *gradient descent* (coborârea pe gradient). La fiecare pas, el calculează cât de mult contribuie fiecare greutate la eroare și exact aici este folosita derivata funcției de activare. Dacă derivata e zero într-o zonă importanta, **învățarea se oprește** în acea zonă, indiferent cât de „greșit" e răspunsul.
+
+ReLU câștigă pe acest plan: derivata ei e 1 pentru orice x pozitiv. Învățarea curge constant.
+
+## Ce urmează
+
+Acum ai toate piesele: un neuron poate combina inputuri liniar, iar o funcție de activare non-liniară îi dă putere reală. În lecția următoare punem mai mulți neuroni împreună într-o **rețea multi-strat** și rezolvăm odată pentru totdeauna problema XOR pe care perceptronul singur nu o putea atinge.

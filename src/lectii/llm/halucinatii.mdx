@@ -1,0 +1,63 @@
+import HalucinatiiSampling from '@/widgets/HalucinatiiSampling'
+
+Ai întâlnit probabil deja fenomenul: ceri unui LLM un fapt aparent simplu, iar el îți răspunde cu certitudine a ceva ce sună plauzibil, dar e greșit. Inventează surse, citează articole care nu există, dă date inventate. Asta se numește **halucinație**, și e cel mai important defect al modelelor de limbaj de azi.
+
+În această ultimă lecție vedem **de ce** se întâmplă asta. Nu e un bug, mai de grabă e o consecință directă a felului în care funcționează modelele.
+
+## Ce face un LLM la fiecare pas
+
+Pune deoparte tot ce ai citit până acum despre „înțelegere", „raționament", „cunoaștere". La nivelul cel mai mic, un LLM face un singur lucru repetat la nesfârșit:
+
+> **Dat un context (lista de tokeni de până acum), prezice o distribuție de probabilități peste toți tokenii posibili pentru următorul token.**
+
+Atât. Nu „caută în baza de date", nu „verifică sursa", nu „raționează". Doar prezice care e cel mai probabil token următor.
+
+Asta nu e o exagerare, e definiția tehnică exactă a unui LLM autoregresiv (GPT, Llama, Claude, Gemini etc.).
+
+## Sampling: alegerea unui token
+
+Modelul îți dă o distribuție de probabilități. Dar răspunsul final trebuie să fie **un singur token**. Cum alegem?
+
+Cea mai simplă strategie: alegi mereu tokenul cu probabilitatea cea mai mare (numită „greedy decoding"). Dar asta produce răspunsuri rigide, repetitive. În practică se face **sampling cu temperatură**, practic se alege un token aleator cu probabilitate proporțională cu cea prezisă. Asta dă variabilitate și răspunsuri mai naturale.
+
+Probează:
+
+<HalucinatiiSampling />
+
+Schimbă scenariul din meniu și apasă „Sample un token" de mai multe ori pentru fiecare. Observă:
+
+- Pentru „Capitala României este", 78% din timp obții „București". E răspunsul corect și frecvent ales. Dar **22% din timp** modelul alege altceva: Cluj, Brașov, sau chiar un cuvânt de tip „situată" care nu e nici măcar un răspuns la întrebare.
+- Pentru „2 + 2 =", probabilitatea pe „4" e ~92%. Aproape sigur. Dar nu pentru că „știe matematică", ci pentru că a văzut combinația de foarte multe ori în date. Pune-i o operație mai rar intalnita (`123 × 47`) și performanța scade brusc.
+- Pentru satelitul „Calypso" descoperit în 2024 (pe care l-am inventat noi), modelul nu are nicio idee că nu există. Distribuția lui e dispersată, dar **nu spune „nu știu"**. Spune ceva care sună plauzibil.
+
+## De ce halucinațiile sunt structurale
+
+Halucinațiile apar pentru că modelul nu are **niciun mecanism intern** care să distingă „știu asta din date" de „inventez ceva plauzibil". Pentru el, ambele cazuri sunt identice: o distribuție de probabilități peste tokeni următori.
+
+Trei consecințe importante:
+
+1. **Modelul nu se „rușinează"**. Va răspunde cu același ton sigur indiferent dacă recită un fapt verificat sau inventează unul. Acest „ton" e o trăsătură stilistică învățată din date (de exemplu, toate articolele de pe Wikipedia sunt scrise sigur).
+
+2. **Erorile se acumulează**. Un model generează token cu token. Dacă la pasul 5 alege un token „greșit" (puțin probabil dar nu zero), tot ce vine după va fi condiționat de acea greșeală. La 200 de tokeni mai târziu, răspunsul poate fi complet diferit de „adevărul" din date.
+
+3. **Prompturile vagi cresc riscul**. Dacă întrebarea ta e specifică și are un răspuns frecvent în date („Cine a scris Luceafărul?"), modelul e foarte sigur. Dacă întrebarea e vagă sau cere un fapt rar, distribuția se aplatizează și mecanismul de sampling alege aleator dintre opțiuni plauzibile, dintre care multe pot fi greșite.
+
+## Cum se reduc halucinațiile? (Parțial)
+
+Cercetarea modernă încearcă mai multe strategii:
+
+- **RAG (Retrieval-Augmented Generation)**: înainte de a răspunde, modelul caută într-o bază de date externă (Wikipedia, documente proprii, web). Apoi răspunde **bazat pe textul recuperat**. Dacă baza e bună, halucinațiile scad mult.
+- **Antrenare cu feedback (RLHF)**: în loc să fie antrenat doar pe conceptul de „prezice următorul token", modelul primește feedback uman despre care răspunsuri sunt utile și sigure. Asta îl învață să spună „nu știu" mai des, când e cazul.
+- **Calibrare**: cercetători încearcă să facă modelul să raporteze și **o estimare a propriei certitudini** (ex: „70% sigur"). Util, dar nu rezolvat încă.
+
+Niciuna dintre acestea nu elimină problema complet. **Un model lingvistic, fără mecanism extern de verificare, nu „știe" niciodată ce știe**. Va da întotdeauna răspuns. Iar uneori, fără să-și dea seama, va inventa.
+
+## Ce ai învățat în secțiunea LLM
+
+Trei lecții, trei piese:
+
+1. **Tokeni**: bucățile de text cu care lucrează modelul.
+2. **Embedding-uri**: felul în care modelul „înțelege" că două bucăți de text au sens similar.
+3. **Halucinații**: limita fundamentală a unui model care prezice doar probabilități, fără verificarea faptelor.
+
+Acesta a fost tot cursul. Acum știi, la un nivel rezonabil de profunzime, cum funcționează rețelele neuronale și modelele de limbaj. 
