@@ -111,4 +111,5 @@ Codul propriu al autorului este disponibil sub licență MIT.
 Componentele externe rămân sub licențele lor proprii (vezi tabelul mai sus).
 
 ## AI
-AI a fost folosit pentru Completarea codului, scheme, text si documentatie.
+AI a fost folosit in acest proiect pentru Completarea codului, creearea widget-urilor, completare text si documentatie README, implicit pentru fisierul DOCUMENTATIE_TEHNICA.md.
+
