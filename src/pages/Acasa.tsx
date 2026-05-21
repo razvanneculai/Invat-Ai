@@ -25,7 +25,7 @@ export default function Acasa() {
         <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted md:text-lg">
           Un curs scurt despre rețele neuronale și modele de limbaj, scris
           pentru elevii de liceu. Muți slidere, vezi cum se schimbă greutățile,
-          înțelegi de ce funcționează — fără cutie neagră.
+          înțelegi de ce funcționează, fără cutie neagră.
         </p>
         <div className="mt-12 flex flex-wrap gap-3">
           <Link
@@ -54,7 +54,7 @@ export default function Acasa() {
         <SectionCard
           eticheta="Secțiunea 2"
           titlu="Modele de limbaj (LLM)"
-          descriere="Tokeni, embedding-uri, atenție. Înțelege ce face un ChatGPT când îți răspunde — și ce nu face."
+          descriere="Tokeni, embedding-uri, atenție. Înțelege ce face un ChatGPT când îți răspunde, și ce nu face."
           lectii={llm}
         />
         <SectionCard
@@ -67,18 +67,14 @@ export default function Acasa() {
 
       <section className="mt-28 border-t border-line pt-12">
         <p className="text-[11px] uppercase tracking-[0.22em] text-muted">De ce există acest site</p>
-        <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2">
           <Pillar
             titlu="Interactiv, nu pasiv"
-            text="Fiecare lecție are o schemă pe care o poți modifica. Nu citești despre cum funcționează un neuron — îl reglezi tu."
+            text="Fiecare lecție are o schemă pe care o poți modifica. Nu citești despre cum funcționează un neuron, îl reglezi tu."
           />
           <Pillar
             titlu="Pentru programa românească"
-            text="Lecțiile sunt etichetate pe clasă (IX–XII) și au prerequisites clare. Știi exact ce trebuie să cunoști înainte."
-          />
-          <Pillar
-            titlu="Minimal, fără reclame"
-            text="Doar text, scheme și sliderele tale. Fără pop-up-uri, fără tracking, fără apeluri la servicii externe."
+            text="Lecțiile sunt etichetate pe clasă (IX-XII) și au prerequisites clare. Știi exact ce trebuie să cunoști înainte."
           />
         </div>
       </section>
