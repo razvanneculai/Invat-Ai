@@ -25,7 +25,7 @@ export default function Acasa() {
         <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted md:text-lg">
           Un curs scurt despre rețele neuronale și modele de limbaj, scris
           pentru elevii de liceu. Muți slidere, vezi cum se schimbă greutățile,
-          înțelegi de ce funcționează, fără cutie neagră.
+          înțelegi de ce funcționează.
         </p>
         <div className="mt-12 flex flex-wrap gap-3">
           <Link
