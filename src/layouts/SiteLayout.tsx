@@ -36,11 +36,6 @@ export default function SiteLayout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-line">
-        <div className="mx-auto max-w-5xl px-6 py-6 text-xs text-muted">
-          Proiect pentru InfoEducație 2026 · Software Educațional
-        </div>
-      </footer>
     </div>
   )
 }
