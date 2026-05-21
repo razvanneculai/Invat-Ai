@@ -54,7 +54,7 @@ export default function Acasa() {
         <SectionCard
           eticheta="Secțiunea 2"
           titlu="Modele de limbaj (LLM)"
-          descriere="Tokeni, embedding-uri, atenție. Înțelege ce face un ChatGPT când îți răspunde, și ce nu face."
+          descriere="Tokeni, embedding-uri, atenție. Înțelege ce face ChatGPT când îți răspunde, și ce nu face."
           lectii={llm}
         />
         <SectionCard
