@@ -3,7 +3,7 @@
 **Proiect:** Învăț AI — site educațional despre AI și machine learning
 **Concurs:** Olimpiada de Inovare și Creație Digitală — InfoEducație 2026
 **Secțiune:** Software Educațional
-**Autor:** _[numele tău]_, clasa _[clasa ta]_, _[școala ta]_
+**Autor:** Neculai Razvan, Morogan Christian, clasa A XI-a, A IX-a, Colegiul National "Nicolae Balcescu" Braila
 
 ---
 
@@ -113,8 +113,6 @@ Lecțiile sunt fișiere `.mdx` care sunt încărcate la build-time prin `import.
 - **Linii de conținut (MDX):** ~2200 (în română)
 - **Dimensiune build de producție:** ~154 KB JS gzip, ~7 KB CSS gzip
 - **Numărul de dependențe runtime:** 4 (React, React DOM, React Router, Framer Motion)
-- **Lighthouse Performance:** _de completat după deploy_
-- **Lighthouse Accessibility:** _de completat după deploy_
 
 > **Notă optimizare:** bundle-ul JS depășește pragul implicit de 500 KB pre-gzip. O optimizare ulterioară posibilă: lazy-loading per rută folosind `React.lazy()` și `Suspense`, care ar reduce bundle-ul inițial la sub 100 KB gzip. Nu e critic la trafic mic, dar e o îmbunătățire ușor de implementat.
 
